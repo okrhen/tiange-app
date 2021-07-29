@@ -1,21 +1,61 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ApolloProvider } from '@apollo/client';
+import React, { useEffect, useState } from 'react';
+import SplashScreen from './src/components/SplashScreen';
+import AppNavigation from './src/navigation/AppNavigation';
+import { extendTheme, NativeBaseProvider } from 'native-base';
+import client, { getToken } from './src/apollo/config';
+
+
 
 export default function App() {
+  const [token, setToken] = useState<string | null | undefined>(null)
+  const [isAppReady, setIsAppReady] = useState<boolean>(false)
+
+  useEffect(() => {
+    getToken().then(item => {
+      setToken(item)
+    });
+
+    setIsAppReady(true)
+  }, [])
+
+
+  const theme = extendTheme({
+    components: {
+      Button: {
+        defaultProps: {
+          colorScheme: 'emerald',
+        },
+        backgroundColor: {
+          primary: {
+            50: '#f0fdfa',
+            100: '#ccfbf1',
+            200: '#99f6e4',
+            300: '#5eead4',
+            400: '#2dd4bf',
+            500: '#14b8a6',
+            600: '#0d9488',
+            700: '#0f766e',
+            800: '#115e59',
+            900: '#134e4a',
+          }
+        }
+      },
+    },
+  });
+
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ApolloProvider client={client}>
+      <NativeBaseProvider theme={theme}>
+        <>
+          <StatusBar style="light" />
+          {isAppReady ?
+            <AppNavigation isLoggedIn={Boolean(token)} />
+            : <SplashScreen />}
+        </>
+      </NativeBaseProvider>
+    </ApolloProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
