@@ -5,6 +5,7 @@ import SplashScreen from './src/components/SplashScreen';
 import AppNavigation from './src/navigation/AppNavigation';
 import { extendTheme, NativeBaseProvider } from 'native-base';
 import client, { getToken } from './src/apollo/config';
+import { LogBox } from 'react-native';
 
 
 
@@ -45,13 +46,19 @@ export default function App() {
     },
   });
 
+  /**
+   * 
+   * Ignored Warnings
+   */
+  LogBox.ignoreAllLogs()
+
 
   return (
     <ApolloProvider client={client}>
       <NativeBaseProvider theme={theme}>
         <>
           <StatusBar style="light" />
-          {isAppReady ?
+          {isAppReady && token != null ?
             <AppNavigation isLoggedIn={Boolean(token)} />
             : <SplashScreen />}
         </>

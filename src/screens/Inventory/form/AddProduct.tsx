@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import { useNavigation } from '@react-navigation/core'
 import { Formik } from 'formik'
 import { Box, Button, Center, HStack, Image, Input, KeyboardAvoidingView, Select, Text, VStack, ScrollView, useToast } from 'native-base'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Keyboard } from 'react-native'
 import AppDialog from '../../../components/AppDialog'
 import { ICommonSelect, IInitProductValues } from '../../../interfaces/AddProduct'
@@ -25,11 +25,14 @@ const initProductValues: IInitProductValues = {
 const AddProduct = () => {
   const navigate = useNavigation()
   const toast = useToast()
+  const [isSaving, setIsSaving] = useState<boolean>(false)
+  const formikRef = useRef(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false)
   const { data } = useQuery(GET_PROD_CATEGORIES);
   const [onCreateProduct] = useMutation(CREATE_PRODUCT, {
     onError: (err) => {
+      setIsSaving(false)
       toast.show({
         title: err.message,
         placement: 'bottom',
@@ -37,6 +40,8 @@ const AddProduct = () => {
       })
     },
     onCompleted: () => {
+      setIsSaving(false)
+      formikRef.current?.resetForm();
       toast.show({
         title: 'Success',
         placement: 'bottom',
@@ -87,9 +92,11 @@ const AddProduct = () => {
         message="Are you sure you want to cancel?"
       />
       <Formik
+        innerRef={formikRef}
         initialValues={initProductValues}
         validationSchema={addProductValidation}
         onSubmit={(values) => {
+          setIsSaving(true);
           onCreateProduct({
             variables: {
               barcode: values.barcode,
@@ -241,7 +248,9 @@ const AddProduct = () => {
                   <Button
                     bg={Themes.main.primary}
                     onPress={handleSubmit}
-                    disabled={!dirty || !isValid}
+                    disabled={!dirty || !isValid || isSaving}
+                    isLoading={isSaving}
+                    isLoadingText="Saving..."
                   >
                     <Text color={Themes.common.white}>Save</Text>
                   </Button>

@@ -9,18 +9,18 @@ import AddProductCategory from '../screens/Inventory/form/AddProductCategory'
 import AddProductUnit from '../screens/Inventory/form/AddProductUnit'
 import AddProduct from '../screens/Inventory/form/AddProduct'
 import AddStock from '../screens/Inventory/form/AddStock';
-import { getToken } from '../apollo/config';
 
 const Stack = createStackNavigator();
 
 const noHeader = { header: () => null }
 const getScreenTitle = (title: string) => ({ title })
 
+
 function AppNavigation({ isLoggedIn }: { isLoggedIn: boolean }) {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName={isLoggedIn ? "Login" : "Dashboard"}>
+            <Stack.Navigator initialRouteName={isLoggedIn ? "Dashboard" : "Login"}>
                 <Stack.Screen
                     name="Login"
                     component={Login}
@@ -33,7 +33,7 @@ function AppNavigation({ isLoggedIn }: { isLoggedIn: boolean }) {
                 <Stack.Screen
                     name="PointOfSale"
                     component={PoS}
-                    options={getScreenTitle('Point of Sale')}
+                    options={noHeader}
                 />
                 <Stack.Screen
                     name="Inventory"

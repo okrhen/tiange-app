@@ -25,7 +25,6 @@ function Login() {
     },
     onCompleted: async ({ signInUser: { token } }) => {
       setIsLogin(false)
-      console.log('token ==>', token)
       if (token) {
         // set user successful login
         await AsyncStorage.setItem('@token', token);

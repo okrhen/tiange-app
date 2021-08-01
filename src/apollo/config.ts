@@ -19,6 +19,16 @@ export const getToken = async () => {
   }
 }
 
+export const clearToken = async () => {
+  try {
+    const value = await AsyncStorage.removeItem('@token')
+    return value
+  } catch(e) {
+    console.log('getToken error ==>', e.message);
+    return undefined
+  }
+}
+
 const authLink = setContext(async (_, { headers }) => {
   // get the authentication token from local storage if it exists
   const token = await getToken();

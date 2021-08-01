@@ -8,7 +8,11 @@ import { gql } from "@apollo/client";
  query getActiveTransaction($transactionNumber: ID!) {
    getActiveSalesTransaction(transactionNumber: $transactionNumber) {
      overallTotal
+     totalItems
+     subTotal
+     vatAmount
      productList {
+      salesTransactionId
        total
        quantity
        product {
@@ -39,4 +43,13 @@ export const ADD_IN_PRODUCT = gql`
     }
   }
 `
+
+export const SAVE_PAYMENT = gql`
+  mutation savePayment($transactionNumber: ID!, $amountReceived: Float!, $paymentType: String!) {
+    salesMakePayment(transactionNumber: $transactionNumber, amountReceived: $amountReceived, paymentType: $paymentType ) {
+      amountChange
+    }
+  }
+`
+
 // === end mutation == 
